@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: myserver  
+    environment:
+      ACCEPT_EULA: 'Y'
+      SA_PASSWORD: 'Sukhman@485'
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks:
+      - mynetwork
+
+  webapp:
+    image: ssk1811/expense-image:latest
+    container_name: expense-container
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      - sqlserver
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+
+volumes:
+  sql_data:
